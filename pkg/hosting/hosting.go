@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/aws-cdk-go/awscdkapigatewayv2alpha/v2"
+	"github.com/aws/aws-cdk-go/awscdkapigatewayv2authorizersalpha/v2"
 	"github.com/aws/aws-cdk-go/awscdkapigatewayv2integrationsalpha/v2"
 	"github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -75,7 +76,21 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 		CommandHooks: &CommandHooks{},
 	}
 
-	// webhook lambda
+	// authorizer lambda
+	authorizerLambda := awscdklambdagoalpha.NewGoFunction(construct, jsii.String("AuthLambda"), &awscdklambdagoalpha.GoFunctionProps{
+		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
+		Entry:        jsii.String("resources/authorizer/cmd/authorizer"),
+		Bundling:     bundlingOptions,
+		Tracing:      awslambda.Tracing_ACTIVE,
+		LogRetention: awslogs.RetentionDays_ONE_WEEK,
+		Architecture: awslambda.Architecture_ARM_64(),
+		Environment: &map[string]*string{
+			"LOG_LEVEL": jsii.String("DEBUG"),
+		},
+		ModuleDir: jsii.String("resources/authorizer/go.mod"),
+	})
+
+	// api lambda
 	apiLambda := awscdklambdagoalpha.NewGoFunction(construct, jsii.String("Lambda"), &awscdklambdagoalpha.GoFunctionProps{
 		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
 		Entry:        jsii.String("resources/api/cmd/api"),
@@ -87,6 +102,14 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 			"LOG_LEVEL": jsii.String("DEBUG"),
 		},
 		ModuleDir: jsii.String("resources/api/go.mod"),
+	})
+
+	auth := awscdkapigatewayv2authorizersalpha.NewHttpLambdaAuthorizer(jsii.String("WafAuthorizer"), authorizerLambda, &awscdkapigatewayv2authorizersalpha.HttpLambdaAuthorizerProps{
+		AuthorizerName: jsii.String("wafAuthorizer"),
+		IdentitySource: jsii.Strings("$request.header.Authorization"),
+		ResponseTypes: &[]awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType{
+			awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType_SIMPLE,
+		},
 	})
 
 	//
@@ -115,6 +138,14 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 		Methods: &[]awscdkapigatewayv2alpha.HttpMethod{
 			awscdkapigatewayv2alpha.HttpMethod_GET,
 		},
+		Authorizer: auth,
+	})
+
+	awscdk.NewCfnOutput(construct, jsii.String("UrlOutput"), &awscdk.CfnOutputProps{
+		Description: jsii.String("API Gateway endpoint URL for Prod stage for Hello World function"),
+		Value: awscdk.Fn_Sub(jsii.String("https://${OpenenterpriseApi}.execute-api.${AWS::Region}.amazonaws.com/"), &map[string]*string{
+			"OpenenterpriseApi": httpapi.HttpApiId(),
+		}),
 	})
 
 	return construct
