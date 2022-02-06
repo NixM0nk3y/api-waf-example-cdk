@@ -56,11 +56,6 @@ func HandleRequest(ctx context.Context, event APIGatewayV2CustomAuthorizerV2Requ
 
 	tx := waf.NewTransaction()
 
-	defer func() {
-		tx.ProcessLogging()
-		tx.Clean()
-	}()
-
 	tx.ProcessConnection(event.RequestContext.HTTP.SourceIP, 55555, "1.1.1.1", 443)
 
 	tx.ProcessURI(fmt.Sprintf("%s?%s", event.RawPath, event.RawQueryString), event.RequestContext.HTTP.Method, event.RequestContext.HTTP.Protocol)
@@ -80,6 +75,9 @@ func HandleRequest(ctx context.Context, event APIGatewayV2CustomAuthorizerV2Requ
 			}
 		}
 
+		tx.ProcessLogging()
+		tx.Clean()
+
 		return events.APIGatewayV2CustomAuthorizerSimpleResponse{
 			IsAuthorized: false,
 		}, nil
@@ -95,6 +93,9 @@ func HandleRequest(ctx context.Context, event APIGatewayV2CustomAuthorizerV2Requ
 				logger.Error("auditevent", zap.Reflect("event", auditevent))
 			}
 		}
+
+		tx.ProcessLogging()
+		tx.Clean()
 
 		return events.APIGatewayV2CustomAuthorizerSimpleResponse{
 			IsAuthorized: false,
