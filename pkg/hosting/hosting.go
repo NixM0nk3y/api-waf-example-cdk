@@ -21,7 +21,10 @@ type CommandHooks struct {
 
 // needed to allow sam local testing
 func (c CommandHooks) AfterBundling(inputDir *string, outputDir *string) *[]*string {
-	return jsii.Strings(fmt.Sprintf("cp ../../test/sam.Makefile %s/Makefile", *outputDir))
+	return jsii.Strings(
+		//fmt.Sprintf("cp ../../test/sam.Makefile %s/Makefile", *outputDir),
+		fmt.Sprintf("if test -d ./wafconfig; then cp -Rp ./wafconfig %s/wafconfig; fi", *outputDir),
+	)
 }
 
 func (c CommandHooks) BeforeBundling(inputDir *string, outputDir *string) *[]*string {
@@ -76,20 +79,6 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 		CommandHooks: &CommandHooks{},
 	}
 
-	// authorizer lambda
-	authorizerLambda := awscdklambdagoalpha.NewGoFunction(construct, jsii.String("AuthLambda"), &awscdklambdagoalpha.GoFunctionProps{
-		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
-		Entry:        jsii.String("resources/authorizer/cmd/authorizer"),
-		Bundling:     bundlingOptions,
-		Tracing:      awslambda.Tracing_ACTIVE,
-		LogRetention: awslogs.RetentionDays_ONE_WEEK,
-		Architecture: awslambda.Architecture_ARM_64(),
-		Environment: &map[string]*string{
-			"LOG_LEVEL": jsii.String("DEBUG"),
-		},
-		ModuleDir: jsii.String("resources/authorizer/go.mod"),
-	})
-
 	// api lambda
 	apiLambda := awscdklambdagoalpha.NewGoFunction(construct, jsii.String("Lambda"), &awscdklambdagoalpha.GoFunctionProps{
 		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
@@ -104,12 +93,51 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 		ModuleDir: jsii.String("resources/api/go.mod"),
 	})
 
+	// Go build options
+	authBundlingOptions := &awscdklambdagoalpha.BundlingOptions{
+		GoBuildFlags: &[]*string{jsii.String(fmt.Sprintf(`-ldflags "-s -w
+			-X api/pkg/version.Version=1.0.%s
+			-X api/pkg/version.BuildHash=%s
+			-X api/pkg/version.BuildDate=%s
+			"`,
+			buildNumber,
+			sourceVersion,
+			buildDate,
+		)),
+		},
+		CgoEnabled:           jsii.Bool(true),
+		ForcedDockerBundling: jsii.Bool(true),
+		DockerImage:          awscdk.DockerImage_FromRegistry(jsii.String("docker.io/nixm0nk3y/go-arm64-lambda-builder:latest")),
+		Environment: &map[string]*string{
+			"GOARCH":      jsii.String("arm64"),
+			"GO111MODULE": jsii.String("on"),
+			"GOOS":        jsii.String("linux"),
+		},
+		CommandHooks: &CommandHooks{},
+	}
+
+	// authorizer lambda
+	authorizerLambda := awscdklambdagoalpha.NewGoFunction(construct, jsii.String("AuthLambda"), &awscdklambdagoalpha.GoFunctionProps{
+		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
+		Entry:        jsii.String("resources/authorizer/cmd/authorizer"),
+		Bundling:     authBundlingOptions,
+		Tracing:      awslambda.Tracing_ACTIVE,
+		LogRetention: awslogs.RetentionDays_ONE_WEEK,
+		MemorySize:   jsii.Number(512),
+		Architecture: awslambda.Architecture_ARM_64(),
+		Environment: &map[string]*string{
+			"LOG_LEVEL": jsii.String("DEBUG"),
+		},
+		ModuleDir: jsii.String("resources/authorizer/go.mod"),
+	})
+
 	auth := awscdkapigatewayv2authorizersalpha.NewHttpLambdaAuthorizer(jsii.String("WafAuthorizer"), authorizerLambda, &awscdkapigatewayv2authorizersalpha.HttpLambdaAuthorizerProps{
 		AuthorizerName: jsii.String("wafAuthorizer"),
-		IdentitySource: jsii.Strings("$request.header.Authorization"),
+		IdentitySource: jsii.Strings("$request.header.Host"), // any standard header
 		ResponseTypes: &[]awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType{
 			awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType_SIMPLE,
 		},
+		ResultsCacheTtl: awscdk.Duration_Millis(jsii.Number(0)),
 	})
 
 	//

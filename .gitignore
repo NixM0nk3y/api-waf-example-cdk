@@ -18,6 +18,7 @@
 .cdk.staging
 cdk.out
 cdk.context.json
+template.yaml
 
 # sam
 .aws-sam

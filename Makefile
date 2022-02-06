@@ -69,17 +69,20 @@ build: stacks/build
 	@$(TASK_DONE)
 
 sam/build:
-	@sam-beta-cdk build --debug
+	@cdk synth --no-staging > template.yaml
 	@$(TASK_BUILD)
 
 sam/test/version: sam/build
-	@sam-beta-cdk local invoke "OpenenterpriseProductionWafStack/Lambda" --env-vars ./test/testenvironment.json --event ./test/events/version.json
+	@sam local invoke "Lambda" --env-vars ./test/testenvironment.json --event ./test/events/version.json
 
 sam/test/hello: sam/build
-	@sam-beta-cdk local invoke "OpenenterpriseProductionWafStack/Lambda" --env-vars ./test/testenvironment.json --event ./test/events/hello.json
+	@sam local invoke "Lambda" --env-vars ./test/testenvironment.json --event ./test/events/hello.json
+
+sam/test/auth: sam/build
+	@sam local invoke "AuthLambda" --env-vars ./test/testenvironment.json --event ./test/events/authorize.json
 
 sam/test/api: sam/build
-	@sam-beta-cdk local start-api --env-vars ./test/testenvironment.json
+	@sam local start-api --env-vars ./test/testenvironment.json
 
 .PHONY: stacks/build $(STACKS)
 

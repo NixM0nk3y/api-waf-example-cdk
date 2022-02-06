@@ -1,0 +1,57 @@
+{
+    "version": "2.0",
+    "type": "REQUEST",
+    "routeArn": "arn:aws:execute-api:eu-west-1:074705540277:aaaaaaaaaa/$default/GET/hello",
+    "identitySource": [
+        "aaaaaaaaaa.execute-api.eu-west-1.amazonaws.com"
+    ],
+    "routeKey": "GET /hello",
+    "rawPath": "/hello",
+    "rawQueryString": "foo=bar",
+    "cookies": null,
+    "headers": {
+        "accept": "*/*",
+        "content-length": "0",
+        "host": "aaaaaaaaaa.execute-api.eu-west-1.amazonaws.com",
+        "user-agent": "curl/7.68.0",
+        "x-amzn-trace-id": "Root=1-61feb428-6a423c5a733a666d747b441b",
+        "x-forwarded-for": "8.8.8.8",
+        "x-forwarded-port": "443",
+        "x-forwarded-proto": "https"
+    },
+    "queryStringParameters": {
+        "foo": "bar"
+    },
+    "requestContext": {
+        "routeKey": "GET /hello",
+        "accountId": "074705540277",
+        "stage": "$default",
+        "requestId": "NFEWVjqBDoEEPqQ=",
+        "apiId": "aaaaaaaaaa",
+        "domainName": "aaaaaaaaaa.execute-api.eu-west-1.amazonaws.com",
+        "domainPrefix": "aaaaaaaaaa",
+        "time": "05/Feb/2022:17:30:16 +0000",
+        "timeEpoch": 1644082216316,
+        "http": {
+            "method": "GET",
+            "path": "/hello",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "8.8.8.8",
+            "userAgent": "curl/7.68.0"
+        },
+        "authentication": {
+            "clientCert": {
+                "clientCertPem": "",
+                "issuerDN": "",
+                "serialNumber": "",
+                "subjectDN": "",
+                "validity": {
+                    "notAfter": "",
+                    "notBefore": ""
+                }
+            }
+        }
+    },
+    "pathParameters": null,
+    "stageVariables": null
+}
