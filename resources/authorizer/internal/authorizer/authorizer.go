@@ -40,6 +40,7 @@ func init() {
 		"wafconfig/coraza.conf",
 		"wafconfig/coreruleset/crs-setup.conf",
 		"wafconfig/coreruleset/rules/*.conf",
+		"wafconfig/coraza-additional-rules.conf",
 	}
 	for _, f := range files {
 		if err := parser.FromFile(f); err != nil {
@@ -60,7 +61,7 @@ func HandleRequest(ctx context.Context, event APIGatewayV2CustomAuthorizerV2Requ
 		tx.Clean()
 	}()
 
-	tx.ProcessConnection(event.RequestContext.HTTP.SourceIP, 55555, "127.0.0.1", 443)
+	tx.ProcessConnection(event.RequestContext.HTTP.SourceIP, 55555, "1.1.1.1", 443)
 
 	tx.ProcessURI(fmt.Sprintf("%s?%s", event.RawPath, event.RawQueryString), event.RequestContext.HTTP.Method, event.RequestContext.HTTP.Protocol)
 
@@ -68,8 +69,33 @@ func HandleRequest(ctx context.Context, event APIGatewayV2CustomAuthorizerV2Requ
 		tx.AddRequestHeader(k, v)
 	}
 
+	// process phase 1
 	if it := tx.ProcessRequestHeaders(); it != nil {
-		logger.Error("Transaction was interrupted", zap.Int("status", it.Status), zap.Int("ruleid", it.RuleID), zap.String("action", it.Action))
+		logger.Error("Transaction was interrupted in phase1", zap.Int("status", it.Status), zap.Int("ruleid", it.RuleID), zap.String("action", it.Action))
+
+		al := tx.AuditLog()
+		if len(al.Messages) > 0 {
+			for _, auditevent := range al.Messages {
+				logger.Error("auditevent", zap.Reflect("event", auditevent))
+			}
+		}
+
+		return events.APIGatewayV2CustomAuthorizerSimpleResponse{
+			IsAuthorized: false,
+		}, nil
+	}
+
+	// process phase 2
+	if it, _ := tx.ProcessRequestBody(); it != nil {
+		logger.Error("Transaction was interrupted in phase2", zap.Int("status", it.Status), zap.Int("ruleid", it.RuleID), zap.String("action", it.Action))
+
+		al := tx.AuditLog()
+		if len(al.Messages) > 0 {
+			for _, auditevent := range al.Messages {
+				logger.Error("auditevent", zap.Reflect("event", auditevent))
+			}
+		}
+
 		return events.APIGatewayV2CustomAuthorizerSimpleResponse{
 			IsAuthorized: false,
 		}, nil
