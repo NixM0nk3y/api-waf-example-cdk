@@ -6,6 +6,8 @@ Demo using coraza in a API gateway authorizer to protect api endpoints
 
 As this demo uses a CGO enabled build for a arm64 target, a docker installation configured for arm64 builds will be required.
 
+https://www.docker.com/blog/multi-arch-images/
+
 ```bash
 go build -v ./cmd/application
 🛠️  cmd/application done
@@ -52,17 +54,8 @@ MIT
 
 ## Useful commands
 
- * `make deploy`            deploy this stack to your default AWS account/region
- * `make sam/test/api`      start the api
- * `make sam/test/hello`    call the hello endpoint
- * `make sam/test/version`  call the version endpoint
-
-## Notes
-
-Had to set the following due to https://github.com/aws/aws-sam-cli/issues/2849
-
-```bash
-"@aws-cdk/core:newStyleStackSynthesis": false,
-```
-
-
+ * `make deploy`             deploy this stack to your default AWS account/region
+ * `make waf/test/auth`      call the authorizor with a clean request
+ * `make waf/test/authblock` call the authorizor with a blocking request
+ * `make waf/test/hello`     call the hello endpoint
+ * `make waf/test/version`   call the version endpoint
