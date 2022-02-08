@@ -28,6 +28,8 @@ github.com/cloudflare/ahocorasick v0.0.0-20210425175752-730270c3e184 h1:8yL+85Jp
 github.com/cloudflare/ahocorasick v0.0.0-20210425175752-730270c3e184/go.mod h1:tGWUZLZp9ajsxUOnHmFFLnqnlKXsCn6GReG4jAD59H0=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
+github.com/corazawaf/libinjection-go v0.0.0-20220205053112-c37a64507319 h1:0AjSNrYuHBwGsn0oubiT9DSb5qn+gvGCdMkzCMiNcJA=
+github.com/corazawaf/libinjection-go v0.0.0-20220205053112-c37a64507319/go.mod h1:OP4TM7xdJ2skyXqNX1AN1wN5nNZEmJNuWbNPOItn7aw=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -84,8 +86,8 @@ github.com/jptosso/coraza-libinjection v0.0.0-20220202204344-d8f6d1749696/go.mod
 github.com/jptosso/coraza-pcre v0.0.0-20211201204829-1bea0f044896 h1:f5iyHtkDDCYDnfDwF/zraHxy9bxwN2ChYwtPyON5vz8=
 github.com/jptosso/coraza-pcre v0.0.0-20211201204829-1bea0f044896/go.mod h1:0NieM5u5kuGbGUj+mQFIl8xUHANcYm6AnrQca25vt/0=
 github.com/jptosso/coraza-waf/v2 v2.0.0-beta.2.0.20211201203316-49869b6ff2ea/go.mod h1:d9K0ycCNi9YmgqQKjgOheq73EY4l6fB8Y6HdLWcx5FM=
-github.com/jptosso/coraza-waf/v2 v2.0.0-rc.1.0.20220131175505-56ff18749033 h1:CP5DXGqutem96ONx1t6lJfq+1InbcJynshBOa3SyKZ0=
-github.com/jptosso/coraza-waf/v2 v2.0.0-rc.1.0.20220131175505-56ff18749033/go.mod h1:8nAcGAsPMHlMo2pDwfe8bZqtfzqG4OcZX6M9ShYVTTs=
+github.com/jptosso/coraza-waf/v2 v2.0.0-rc.1.0.20220207134348-8314d1f15f3b h1:c/MSHLH9TOIfy36CjRUWrnOEzmD0Jgu/aM7lYvEzqbc=
+github.com/jptosso/coraza-waf/v2 v2.0.0-rc.1.0.20220207134348-8314d1f15f3b/go.mod h1:5FGBTrmUN+fGHmFkeLPbut8QiABMzq4Mr5gwWxH8nBc=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
 github.com/kelseyhightower/envconfig v1.4.0/go.mod h1:cccZRl6mQpaq41TPp5QxidR+Sa3axMbJDNb//FQX6Gg=
 github.com/kinbiko/jsonassert v1.0.1 h1:8gdLmUaPWuxk2TzQSofKRqatFH6zwTF6AsUH4bugJYY=

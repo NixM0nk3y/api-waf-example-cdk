@@ -1,6 +1,5 @@
 {
     "app": "go mod download && go run ./cmd/application/application.go",
     "context": {
-        "@aws-cdk/core:newStyleStackSynthesis": false
     }
 }

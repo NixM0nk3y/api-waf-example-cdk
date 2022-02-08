@@ -133,7 +133,7 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 
 	auth := awscdkapigatewayv2authorizersalpha.NewHttpLambdaAuthorizer(jsii.String("WafAuthorizer"), authorizerLambda, &awscdkapigatewayv2authorizersalpha.HttpLambdaAuthorizerProps{
 		AuthorizerName: jsii.String("wafAuthorizer"),
-		IdentitySource: jsii.Strings("$request.header.Host"), // any standard header
+		IdentitySource: &[]*string{},
 		ResponseTypes: &[]awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType{
 			awscdkapigatewayv2authorizersalpha.HttpLambdaResponseType_SIMPLE,
 		},

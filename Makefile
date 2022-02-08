@@ -68,20 +68,23 @@ ci/deploy/application: build
 build: stacks/build
 	@$(TASK_DONE)
 
-sam/build:
+waf/build:
 	@cdk synth --no-staging > template.yaml
 	@$(TASK_BUILD)
 
-sam/test/version: sam/build
+waf/test/version:
 	@sam local invoke "Lambda" --env-vars ./test/testenvironment.json --event ./test/events/version.json
 
-sam/test/hello: sam/build
+waf/test/hello:
 	@sam local invoke "Lambda" --env-vars ./test/testenvironment.json --event ./test/events/hello.json
 
-sam/test/auth: sam/build
+waf/test/auth:
 	@sam local invoke "AuthLambda" --env-vars ./test/testenvironment.json --event ./test/events/authorize.json
 
-sam/test/api: sam/build
+waf/test/authblock:
+	@sam local invoke "AuthLambda" --env-vars ./test/testenvironment.json --event ./test/events/authorize-block.json
+
+waf/test/api: waf/build
 	@sam local start-api --env-vars ./test/testenvironment.json
 
 .PHONY: stacks/build $(STACKS)

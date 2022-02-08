@@ -1,8 +1,10 @@
-# CDK SAM Demo
+# CDK Waf authorizer demo
 
-Demo using sam to drive a CDK serverless api
+Demo using coraza in a API gateway authorizer to protect api endpoints
 
 # Stack Setup
+
+As this demo uses a CGO enabled build for a arm64 target, a docker installation configured for arm64 builds will be required.
 
 ```bash
 go build -v ./cmd/application
@@ -10,19 +12,36 @@ go build -v ./cmd/application
 ✓  stacks/build done
 ✓  build done
 cdk deploy --app ./application
-2021/11/03 21:56:33 Starting Application Build
-Bundling asset OpenenterpriseProductionSamAppStack/Hosting/Lambda/Code/Stage...
-OpenenterpriseProductionSamAppStack: deploying...
-[0%] start: Publishing e9deedc87e534faa84cd401ae14a2e47c1e235ff4cbab5bbadd3d810bf38c6ec:current
-[50%] success: Published e9deedc87e534faa84cd401ae14a2e47c1e235ff4cbab5bbadd3d810bf38c6ec:current
-[50%] start: Publishing 54aa9368cb0af77728b139df544966eb0ee9754a76a567e67d1db78a861cdb72:current
-[100%] success: Published 54aa9368cb0af77728b139df544966eb0ee9754a76a567e67d1db78a861cdb72:current
-OpenenterpriseProductionSamAppStack: creating CloudFormation changeset...
+2022/02/08 19:46:26 Starting Application Build
+Bundling asset OpenenterpriseProductionWafStack/Hosting/Lambda/Code/Stage...
+Bundling asset OpenenterpriseProductionWafStack/Hosting/AuthLambda/Code/Stage...
+WARNING: The requested image's platform (linux/arm64/v8) does not match the detected host platform (linux/amd64) and no specific platform was requested
+go: downloading github.com/aws/aws-lambda-go v1.28.0
+...snip...
+go: downloading golang.org/x/text v0.3.6
 
- ✅  OpenenterpriseProductionSamAppStack
+✨  Synthesis time: 389.27s
 
+OpenenterpriseProductionWafStack: deploying...
+[0%] start: Publishing 9389c3589f32bfd1b87004861d601e2975779b9cab5e93b343b6ce714f1be21b:current
+[33%] success: Published 9389c3589f32bfd1b87004861d601e2975779b9cab5e93b343b6ce714f1be21b:current
+[33%] start: Publishing 6c0316fef24d0df8a9a705c77052001217d864f49af386539d01df54618cd131:current
+[66%] success: Published 6c0316fef24d0df8a9a705c77052001217d864f49af386539d01df54618cd131:current
+[66%] start: Publishing 03a6956a2874eef697c616680543da701996309b495a79361634bb7569687fd6:current
+[100%] success: Published 03a6956a2874eef697c616680543da701996309b495a79361634bb7569687fd6:current
+OpenenterpriseProductionWafStack: creating CloudFormation changeset...
+
+ ✅  OpenenterpriseProductionWafStack
+
+✨  Deployment time: 72.56s
+
+Outputs:
+OpenenterpriseProductionWafStack.HostingUrlOutput7A35DF00 = https://aaaaaaaaa.execute-api.eu-west-1.amazonaws.com/
 Stack ARN:
-arn:aws:cloudformation:eu-west-1:074705540277:stack/OpenenterpriseProductionSamAppStack/18c8c170-3ce5-11ec-8c2b-06e6d7c1014f
+arn:aws:cloudformation:eu-west-1:074705540277:stack/OpenenterpriseProductionWafStack/d6550f30-867f-11ec-98f3-0a8ba53abf81
+
+✨  Total time: 461.83s
+
 🛠️  deploy/application done
 ✓  deploy done
 ```
